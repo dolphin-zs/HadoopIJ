@@ -1,6 +1,8 @@
 HadoopIJ
 ========
 
+Author: Zheng Shun, Zhang Yang
+
 Secondary Development based on HIPI (Hadoop Image Processing Interface) and ImageJ
 
 Use maven to build.
