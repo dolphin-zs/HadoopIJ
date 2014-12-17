@@ -4,6 +4,7 @@ import ij.IJ;
 import ij.ImagePlus;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -41,6 +42,7 @@ public class Rgb2Gray extends Configured implements Tool {
 				IJ.run(imp, "8-bit", "");
 				IJ.saveAs(imp, "PNG", "/tmp/" + imp.getShortTitle());
 
+				//Arrays.toString(System.getenv().entrySet().toArray())
 				String output = imageWidth + "x" + imageHeight + "\t(" + hexHash + ")\t	" + camera;
 				context.write(new IntWritable(1), new Text(output));
 			}
