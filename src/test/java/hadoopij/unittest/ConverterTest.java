@@ -20,6 +20,7 @@ import org.junit.Test;
 
 public class ConverterTest {
 
+	/*
 	@Before
 	public void setUp() throws IOException {
 		Configuration conf = new Configuration();
@@ -42,6 +43,7 @@ public class ConverterTest {
 			System.out.println(ih.toString() + " ByteArray Length: " + fi.getData().length);
 		}
 	}
+	*/
 
 	@Test
 	public void testIJ() throws IOException {
@@ -52,13 +54,17 @@ public class ConverterTest {
 			ImageHeader ih = hib.next();
 			FloatImage fi = hib.getCurrentImage();
 			ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi);
+			FloatImage tempfi = Converter.imagePlus2FloatImage(ip);
+			ImagePlus ip2 = Converter.floatImage2ImagePlus(ih.toString(), tempfi);
 			try {
-				IJ.run(ip, "8-bit", "");
+//				IJ.run(ip, "8-bit", "");
 				IJ.saveAs(ip, "PNG", "/tmp/" + ih.toString() + ".png");
+				IJ.saveAs(ip2, "PNG", "/tmp/" + ih.toString() + "_conv.png");
 			} catch (HeadlessException he) {
 				System.out.println(he.getMessage());
 			}
 			System.out.println(ih.toString() + " ByteArray Length: " + fi.getData().length);
+			System.out.println(ih.toString() + "ByteArray Length: " + tempfi.getData().length);
 		}
   }
 }
