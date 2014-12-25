@@ -1,6 +1,8 @@
 HadoopIJ
 ========
 
+School: Tsinghua University
+
 Author: Zheng Shun, Zhang Yang
 
 Secondary Development based on HIPI (Hadoop Image Processing Interface) and ImageJ
