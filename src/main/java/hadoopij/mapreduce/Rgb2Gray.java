@@ -25,6 +25,11 @@ import hipi.image.ImageHeader;
 import hipi.imagebundle.mapreduce.ImageBundleInputFormat;
 import hipi.util.ByteUtils;
 
+/**
+ * 
+ * @author zhengshun
+ *
+ */
 public class Rgb2Gray extends Configured implements Tool {
 
 	public static class R2GMapper extends Mapper<ImageHeader, FloatImage, IntWritable, Text> {

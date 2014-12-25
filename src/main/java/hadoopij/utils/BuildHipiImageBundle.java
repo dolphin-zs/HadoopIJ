@@ -13,7 +13,11 @@ import java.util.StringTokenizer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
-
+/**
+ * 
+ * @author zhengshun
+ *
+ */
 public class BuildHipiImageBundle {
     private static ArrayList<String> fileList = new ArrayList<String>();
 
