@@ -73,8 +73,8 @@ public class Hib2Hib extends Configured implements Tool {
 		String inputPath = args[0];
 		String outputPath = args[1];
 		
-		HipiJob job = new HipiJob(conf, "Hib2Matrix");
-		job.setJarByClass(Hib2Matrix.class);
+		HipiJob job = new HipiJob(conf, "Hib2Hib");
+		job.setJarByClass(Hib2Hib.class);
 		job.setMapperClass(H2HMapper.class);
 		job.setCombinerClass(H2HReducer.class);
 		job.setReducerClass(H2HReducer.class);
@@ -99,7 +99,7 @@ public class Hib2Hib extends Configured implements Tool {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		int exitCode = ToolRunner.run(new Hib2Matrix(), args);
+		int exitCode = ToolRunner.run(new Hib2Hib(), args);
 		System.exit(exitCode);
 	}
 }
