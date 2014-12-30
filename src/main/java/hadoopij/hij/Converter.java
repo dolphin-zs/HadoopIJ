@@ -7,10 +7,19 @@ import java.awt.image.BufferedImage;
 import hipi.image.FloatImage;
 
 public class Converter {
+	static int rgbMax = 256 * 256 * 256;
+
 	public static ImagePlus floatImage2ImagePlus(String imageName, FloatImage fi) {
 		int width = fi.getWidth();
 		int height = fi.getHeight();
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		if (fi.getBands() == 1) {
+			System.out.println("rgb size = 1");
+		} else if (fi.getBands() == 3) {
+			System.out.println("rgb size = 3");
+		} else {
+			System.out.println("rgb size Error");
+		}
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (fi.getBands() == 1) {
@@ -40,9 +49,12 @@ public class Converter {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				if (band == 1) {
-					fi.setPixel(x, y, 0, (float) bi.getRGB(x, y) / 255);
+					int rgb = bi.getRGB(x, y);
+					rgb = rgb < 0 ? rgb + rgbMax : rgb;
+					fi.setPixel(x, y, 0, (float) rgb / rgbMax);
 				} else if (band == 3) {
 					int rgb = bi.getRGB(x, y);
+					rgb = rgb < 0 ? rgb + rgbMax : rgb;
 					int mask = (1 << 9) - 1;
 					int blue = rgb & mask;
 					rgb >>= 8;

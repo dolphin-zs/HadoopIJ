@@ -29,7 +29,7 @@ import org.apache.hadoop.util.ToolRunner;
  * @author zhengshun
  * 
  */
-public class Hib2Matrix extends Configured implements Tool {
+public class Hib2MatrixTemplate1 extends Configured implements Tool {
 	
 	public static class H2MMapper extends Mapper<ImageHeader, FloatImage, IntWritable, Text> {
 
@@ -67,15 +67,15 @@ public class Hib2Matrix extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		if (args.length < 2) {
-			System.out.println("Usage: Hib2Matrix <input hib> <output dir>");
+			System.out.println("Usage: Hib2MatrixTemplate1 <input hib> <output dir>");
 			System.exit(0);
 		}
 		String inputPath = args[0];
 		String outputPath = args[1];
 		
 		@SuppressWarnings("deprecation")
-		Job job = new Job(conf, "Hib2Matrix");
-		job.setJarByClass(Hib2Matrix.class);
+		Job job = new Job(conf, "Hib2MatrixTemplate1");
+		job.setJarByClass(Hib2MatrixTemplate1.class);
 		job.setMapperClass(H2MMapper.class);
 		job.setReducerClass(H2MReducer.class);
 		
@@ -95,7 +95,7 @@ public class Hib2Matrix extends Configured implements Tool {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		int exitCode = ToolRunner.run(new Hib2Matrix(), args);
+		int exitCode = ToolRunner.run(new Hib2MatrixTemplate1(), args);
 		System.exit(exitCode);
 	}
 
