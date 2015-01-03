@@ -30,16 +30,16 @@ public class Hib2MatrixTemplate2 {
         public void map(ImageHeader key, FloatImage value, Context context)
                 throws IOException, InterruptedException {
             if (value != null) {
-                ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value);
+                ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value, true);
 
                 IJ.run(imp, "8-bit", "");
-                IJ.run(imp, "Add Noise", "");
+                //IJ.run(imp, "Add Noise", "");
                 //IJ.run(imp, "Gaussian Blur...", "sigma=2");
                 IJ.run(imp, "Size...", "width=32 height=16 average interpolation=Bilinear");
                 //imp.show();
                 IJ.saveAs(imp, "PNG", "/tmp/out0.png");
 
-                FloatImage fimg = Converter.imagePlus2FloatImage(imp);
+                FloatImage fimg = Converter.imagePlus2FloatImage(imp, false);
                 String floatArrayStr = Arrays.toString(fimg.getData());
                 String textStr = floatArrayStr.substring(1, floatArrayStr.length() - 1);
                 context.write(new IntWritable(1), new Text(textStr));

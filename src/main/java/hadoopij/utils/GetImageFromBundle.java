@@ -22,12 +22,15 @@ public class GetImageFromBundle {
         Configuration conf = new Configuration();
         HipiImageBundle hib = new HipiImageBundle(new Path(hibFile), conf);
         hib.open(AbstractImageBundle.FILE_MODE_READ, true);
+        int cnt = 0;
         while(hib.hasNext()){
             ImageHeader ih = hib.next();
             FloatImage fi = hib.getCurrentImage();
-            ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi);
+            ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi, true);
             try {
+                cnt++;
                 IJ.saveAs(ip, imgType, outdir + ih.toString() + "." + imgType.toLowerCase());
+                System.out.println("file " + cnt + " " + ih.toString());
             } catch (HeadlessException he) {
                 System.out.println(he.getMessage());
             }
@@ -36,7 +39,7 @@ public class GetImageFromBundle {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            System.out.println("Usage: GetImageFromBundle <input dir.hib> <output_name>");
+            System.out.println("Usage: GetImageFromBundle <input dir.hib> <output dir>");
             System.exit(0);
         }
         String strInPath = args[0];

@@ -9,29 +9,43 @@ import hipi.image.FloatImage;
 public class Converter {
 	static int rgbMax = 256 * 256 * 256;
 
-	public static ImagePlus floatImage2ImagePlus(String imageName, FloatImage fi) {
+	public static ImagePlus floatImage2ImagePlus(String imageName, FloatImage fi, boolean flagRGB) {
 		int width = fi.getWidth();
 		int height = fi.getHeight();
-		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		if (fi.getBands() == 1) {
-			System.out.println("rgb size = 1");
-		} else if (fi.getBands() == 3) {
-			System.out.println("rgb size = 3");
+
+		BufferedImage bi = null;
+		System.out.println("FloatImage -> ImagePlus: flagRGB = " + flagRGB + " bands = " + fi.getBands());
+		if (flagRGB) {
+			bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					if (fi.getBands() == 1) {
+						bi.setRGB(x, y, (int) (fi.getPixel(x, y, 0) * rgbMax));
+					} else if (fi.getBands() == 3) {
+						int red = (int) (fi.getPixel(x, y, 0) * 255);
+						int green = (int) (fi.getPixel(x, y, 1) * 255);
+						int blue = (int) (fi.getPixel(x, y, 2) * 255);
+						int rgb = red;
+						rgb = (rgb << 8) + green;
+						rgb = (rgb << 8) + blue;
+						bi.setRGB(x, y, rgb);
+					}
+				}
+			}
 		} else {
-			System.out.println("rgb size Error");
-		}
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (fi.getBands() == 1) {
-					bi.setRGB(x, y, (int)(fi.getPixel(x, y, 0) * 255));
-				} else if (fi.getBands() == 3) {
-					int red = (int) (fi.getPixel(x, y, 0) * 255);
-					int green = (int) (fi.getPixel(x, y, 1) * 255);
-					int blue = (int) (fi.getPixel(x, y, 2) * 255);
-					int rgb = red;
-					rgb = (rgb << 8) + green;
-					rgb = (rgb << 8) + blue;
-					bi.setRGB(x, y, rgb);
+			bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					if (fi.getBands() == 1) {
+						int base = (int) (fi.getPixel(x, y, 0) * 255);
+						int rgb = base;
+						rgb = (rgb << 8) + base;
+						rgb = (rgb << 8) + base;
+						//int base = (int) fi.getPixel(x, y, 0) * rgbMax;
+						bi.setRGB(x, y, rgb);
+					} else {
+						System.out.println("Error in FloatImage dimension");
+					}
 				}
 			}
 		}
@@ -39,31 +53,34 @@ public class Converter {
 		return ip;
 	}
 
-	public static FloatImage imagePlus2FloatImage(ImagePlus ip) {
+	public static FloatImage imagePlus2FloatImage(ImagePlus ip, boolean flagRGB) {
 		int[] conf = ip.getDimensions();
 		int width = conf[0];
 		int height = conf[1];
 		int band = conf[2];
 		BufferedImage bi = ip.getBufferedImage();
 		FloatImage fi = new FloatImage(width, height, band);
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (band == 1) {
-					int rgb = bi.getRGB(x, y);
-					rgb = rgb < 0 ? rgb + rgbMax : rgb;
-					fi.setPixel(x, y, 0, (float) rgb / rgbMax);
-				} else if (band == 3) {
-					int rgb = bi.getRGB(x, y);
-					rgb = rgb < 0 ? rgb + rgbMax : rgb;
-					int mask = (1 << 9) - 1;
-					int blue = rgb & mask;
-					rgb >>= 8;
-					int green = rgb & mask;
-					rgb >>= 8;
-					int red = rgb & mask;
-					fi.setPixel(x, y, 0, (float) red / 255);
-					fi.setPixel(x, y, 1, (float) green / 255);
-					fi.setPixel(x, y, 2, (float) blue / 255);
+		System.out.println("ImagePlus -> FloatImage: flagRGB = " + flagRGB + " bands = " + fi.getBands());
+		if (flagRGB) {
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					if (band == 1) {
+						int rgb = bi.getRGB(x, y) & 0xffffff;
+						fi.setPixel(x, y, 0, (float) rgb / rgbMax);
+					} else if (band == 3) {
+						System.out.println("Error in ImagePlus dimension");
+					}
+				}
+			}
+		} else {
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					if (band == 1) {
+						int rgb = bi.getRGB(x, y) & 0xff;
+						fi.setPixel(x, y, 0, (float) rgb / 255);
+					} else {
+						System.out.println("Error in ImagePlus dimension");
+					}
 				}
 			}
 		}

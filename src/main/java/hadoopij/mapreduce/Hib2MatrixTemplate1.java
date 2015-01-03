@@ -37,7 +37,7 @@ public class Hib2MatrixTemplate1 extends Configured implements Tool {
 		public void map(ImageHeader key, FloatImage value, Context context) 
 				throws IOException, InterruptedException {
 			if (value != null) {
-				ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value);
+				ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value, true);
 
 				IJ.run(imp, "8-bit", "");
 				IJ.run(imp, "Add Noise", "");
@@ -46,7 +46,7 @@ public class Hib2MatrixTemplate1 extends Configured implements Tool {
 				//imp.show();
 				IJ.saveAs(imp, "PNG", "/tmp/out0.png");
 
-				FloatImage fimg = Converter.imagePlus2FloatImage(imp);
+				FloatImage fimg = Converter.imagePlus2FloatImage(imp, false);
 				String floatArrayStr = Arrays.toString(fimg.getData());
 				String textStr = floatArrayStr.substring(1, floatArrayStr.length() - 1);
 				context.write(new IntWritable(1), new Text(textStr));
@@ -93,7 +93,7 @@ public class Hib2MatrixTemplate1 extends Configured implements Tool {
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 		return 0;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		int exitCode = ToolRunner.run(new Hib2MatrixTemplate1(), args);
 		System.exit(exitCode);

@@ -42,7 +42,7 @@ public class Rgb2Gray extends Configured implements Tool {
 				String hexHash = ByteUtils.asHex(ByteUtils.FloatArraytoByteArray(value.getData()));
 				String camera = key.getEXIFInformation("Model");
 								
-				ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value);
+				ImagePlus imp = Converter.floatImage2ImagePlus(key.toString(), value, true);
 				IJ.run(imp, "8-bit", "");
 				IJ.saveAs(imp, "PNG", "/tmp/" + imp.getShortTitle());
 

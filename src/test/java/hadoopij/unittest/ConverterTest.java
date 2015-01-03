@@ -32,18 +32,18 @@ public class ConverterTest {
 		hib.close();
 	}
 
-	@Test
-	public void testFloatImage2ImagePlus() throws IOException {
-		Configuration conf = new Configuration();
-		HipiImageBundle hib = new HipiImageBundle(new Path("/tmp/bundle-iiis.hib"), conf);
-		hib.open(AbstractImageBundle.FILE_MODE_READ, true);
-		while(hib.hasNext()){
-			ImageHeader ih = hib.next();
-			FloatImage fi = hib.getCurrentImage();
-			ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi);
-			System.out.println(ih.toString() + " ByteArray Length: " + fi.getData().length);
-		}
-	}
+	//@Test
+	//public void testFloatImage2ImagePlus() throws IOException {
+	//	Configuration conf = new Configuration();
+	//	HipiImageBundle hib = new HipiImageBundle(new Path("/tmp/bundle-iiis.hib"), conf);
+	//	hib.open(AbstractImageBundle.FILE_MODE_READ, true);
+	//	while(hib.hasNext()){
+	//		ImageHeader ih = hib.next();
+	//		FloatImage fi = hib.getCurrentImage();
+	//		ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi, true);
+	//		System.out.println(ih.toString() + " ByteArray Length: " + fi.getData().length);
+	//	}
+	//}
 
 	//@Test
 	//public void testIJ() throws IOException {
@@ -53,16 +53,16 @@ public class ConverterTest {
 	//	while(hib.hasNext()){
 	//		ImageHeader ih = hib.next();
 	//		FloatImage fi = hib.getCurrentImage();
-	//		ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi);
-	//		FloatImage tempfi = Converter.imagePlus2FloatImage(ip);
-	//		ImagePlus ip2 = Converter.floatImage2ImagePlus(ih.toString(), tempfi);
-	//		try {
-	//			IJ.run(ip, "8-bit", "");
-	//			IJ.saveAs(ip, "PNG", "/tmp/" + ih.toString() + ".png");
-	//			IJ.saveAs(ip2, "PNG", "/tmp/" + ih.toString() + "_conv.png");
-	//		} catch (HeadlessException he) {
-	//			System.out.println(he.getMessage());
-	//		}
+	//		ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi, true);
+	//		FloatImage tempfi = Converter.imagePlus2FloatImage(ip, true);
+	//		ImagePlus ip2 = Converter.floatImage2ImagePlus(ih.toString(), tempfi, true);
+	//		//try {
+	//		//	IJ.run(ip, "8-bit", "");
+	//		//	IJ.saveAs(ip, "PNG", "/tmp/" + ih.toString() + ".png");
+	//		//	IJ.saveAs(ip2, "PNG", "/tmp/" + ih.toString() + "_conv.png");
+	//		//} catch (HeadlessException he) {
+	//		//	System.out.println(he.getMessage());
+	//		//}
 	//		System.out.println(ih.toString() + " ByteArray Length: " + fi.getData().length);
 	//		System.out.println(ih.toString() + "ByteArray Length: " + tempfi.getData().length);
 	//	}
@@ -73,34 +73,36 @@ public class ConverterTest {
 		Configuration conf = new Configuration();
 		HipiImageBundle hib = new HipiImageBundle(new Path("/tmp/bundle-iiis.hib"), conf);
 		hib.open(AbstractImageBundle.FILE_MODE_READ, true);
-		while(hib.hasNext()){
+		while(hib.hasNext()) {
 			ImageHeader ih = hib.next();
 			FloatImage fi = hib.getCurrentImage();
-			ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi);
-			int width = ip.getWidth();
-			int height = ip.getHeight();
-			int channel = ip.getChannel();
-			System.out.println("width: " + width + " height: " + height + " channel: " + channel);
-			BufferedImage bi = ip.getBufferedImage();
-			//BufferedImage bi = Converter.floatImage2BufferedImage(fi);
-			//int width = bi.getWidth();
-			//int height = bi.getHeight();
-			int[] biData = bi.getRGB(0, 0, width, height, null, 0, width);
+			ImagePlus ip = Converter.floatImage2ImagePlus(ih.toString(), fi, true);
+			IJ.run(ip, "8-bit", "");
 			//IJ.run(ip, "Size...", "width=32 height=16 average interpolation=Bilinear");
-			FloatImage tempfi = Converter.imagePlus2FloatImage(ip);
-			//try {
-//			//	IJ.run(ip, "8-bit", "");
-			//	IJ.saveAs(ip, "PNG", "/tmp/" + ih.toString() + ".png");
-			//	IJ.saveAs(ip2, "PNG", "/tmp/" + ih.toString() + "_conv.png");
-			//} catch (HeadlessException he) {
-			//	System.out.println(he.getMessage());
-			//}
+			//int width = ip.getWidth();
+			//int height = ip.getHeight();
+			//int channel = ip.getChannel();
+			//System.out.println("width: " + width + " height: " + height + " channel: " + channel);
+			BufferedImage bi = ip.getBufferedImage();
+			int width = bi.getWidth();
+			int height = bi.getHeight();
+			int[] biData = bi.getRGB(0, 0, width, height, null, 0, width);
+			//System.out.println("type: " + bi.getType());
+			//BufferedImage bi = Converter.floatImage2BufferedImage(fi);
+			//IJ.run(ip, "Size...", "width=32 height=16 average interpolation=Bilinear");
+			FloatImage tempfi = Converter.imagePlus2FloatImage(ip, false);
+			ImagePlus ip2 = Converter.floatImage2ImagePlus(ih.toString(), tempfi, false);
+			//IJ.run(ip2, "Size...", "width=32 height=16 average interpolation=Bilinear");
+			IJ.saveAs(ip, "PNG", "/tmp/" + ih.toString() + ".png");
+			IJ.saveAs(ip2, "PNG", "/tmp/" + ih.toString() + "_conv.png");
 			String rawStr = Arrays.toString(Arrays.copyOfRange(fi.getData(), 0, 10));
 			String midStr = Arrays.toString(Arrays.copyOfRange(biData, 0, 10));
 			String resStr = Arrays.toString(Arrays.copyOfRange(tempfi.getData(), 0, 10));
 			System.out.println("Raw FloatImage: " + rawStr);
 			System.out.println("mid int data: " + midStr);
 			System.out.println("Converter Result: " + resStr);
+			//System.out.println(Arrays.toString(biData));
+			//System.out.println(Arrays.toString(tempfi.getData()));
 		}
 	}
 }
